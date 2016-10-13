@@ -67,4 +67,18 @@ module.exports = function (N, apiPath) {
   N.wire.after(apiPath, function* update_album(env) {
     yield N.models.users.Album.updateInfo(env.data.media.album, true);
   });
+
+
+  // Mark user as active
+  //
+  N.wire.after(apiPath, function* set_active_flag(env) {
+    if (!env.user_info.active) {
+      env.user_info.active = true;
+
+      yield N.models.users.User.update(
+        { _id: env.user_info.user_id },
+        { $set: { active: true } }
+      );
+    }
+  });
 };

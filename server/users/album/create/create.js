@@ -33,4 +33,18 @@ module.exports = function (N, apiPath) {
 
     env.res.album = album;
   });
+
+
+  // Mark user as active
+  //
+  N.wire.after(apiPath, function* set_active_flag(env) {
+    if (!env.user_info.active) {
+      env.user_info.active = true;
+
+      yield N.models.users.User.update(
+        { _id: env.user_info.user_id },
+        { $set: { active: true } }
+      );
+    }
+  });
 };
